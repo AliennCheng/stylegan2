@@ -19,7 +19,7 @@ Why I pick them manually? I need to keep the data balanced, which means I need t
 
 All my works are in the [notebook](./Animify.ipynb). Check that out!
 
-![raw](./images/raw/example.jpg)
+![aligned](./images/aligned/example_01.png)
 
 ![generated](./images/generated/example_01-anime.jpg)
 
