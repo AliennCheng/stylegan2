@@ -1,0 +1,20 @@
+# from https://colab.research.google.com/drive/1s2XPNMwf6HDhrJ1FMwlW1jl-eQ2-_tlk?usp=sharing#scrollTo=b-2oM_L8VWYZ
+
+import numpy as np
+from PIL import Image
+import dnnlib
+import dnnlib.tflib as tflib
+from pathlib import Path
+import pretrained_networks
+
+# _, _, Gs_blended = pretrained_networks.load_networks('pretrained_models/blended.pkl')
+_, _, Gs_blended = pretrained_networks.load_networks('pretrained_models/ffhq-to-anime-512-config-f.pkl')
+
+latent_dir = Path("images/generated")
+latents = latent_dir.glob("*.npy")
+for latent_file in latents:
+    latent = np.load(latent_file)
+    latent = np.expand_dims(latent,axis=0)
+    synthesis_kwargs = dict(output_transform=dict(func=tflib.convert_images_to_uint8, nchw_to_nhwc=False), minibatch_size=8)
+    images = Gs_blended.components.synthesis.run(latent, randomize_noise=False, **synthesis_kwargs)
+    Image.fromarray(images.transpose((0,2,3,1))[0], 'RGB').save(latent_file.parent / (f"{latent_file.stem}-anime.jpg"))

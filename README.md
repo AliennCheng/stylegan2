@@ -1,3 +1,45 @@
+# Animify -- Face Transformation from Human to Anime
+
+## Introduction
+---
+
+This is a project just for fun!
+Inspired by [Toonify](https://www.justinpinkney.com/toonify-yourself/), I tried to follow the tips the author provided to generate an anime face from a given real human face.
+
+Due to the constraint of computational resources of a poor student, the outcome seems to be a bit worse than what it should be. I used RTX 2070 and all the works are done in a day.
+
+## Data Preparation
+---
+I downloaded the [danbooru2019-portrait](https://www.gwern.net/Crops#danbooru2019-portraits) dataset and manually pick 1000 images from it.
+
+Why I pick them manually? I need to keep the data balanced, which means I need to keep the feature diversity as much as possible.
+
+![anime-portraits](./imgs/anime-portraits.png)
+
+## Process
+---
+All my works are in the [notebook](./Animify.ipynb). Check that out!
+
+![raw](./images/raw/example.jpg)
+
+![generated](./images/generated/example_01-anime.jpg)
+
+## Reference
+---
+[Analyzing and Improving the Image Quality of StyleGAN](https://arxiv.org/abs/1912.04958)
+
+[Toonify yourself by Justin Pinkney](https://www.justinpinkney.com/toonify-yourself/)
+
+[stylegan2encoder by rolux](https://github.com/rolux/stylegan2encoder)
+
+[Making Anime Faces With StyleGAN](https://www.gwern.net/Faces)
+
+[malnyun_faces by bryandlee](https://github.com/bryandlee/malnyun_faces)
+
+
+# Original README
+---
+
 ## StyleGAN2 &mdash; Official TensorFlow Implementation
 
 ![Teaser image](./docs/stylegan2-teaser-1024x256.png)

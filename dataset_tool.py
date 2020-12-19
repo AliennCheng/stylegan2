@@ -30,13 +30,13 @@ def error(msg):
 #----------------------------------------------------------------------------
 
 class TFRecordExporter:
-    def __init__(self, tfrecord_dir, expected_images, print_progress=True, progress_interval=10):
+    def __init__(self, tfrecord_dir, expected_images, print_progress=True, progress_interval=10, res_log2=7):
         self.tfrecord_dir       = tfrecord_dir
         self.tfr_prefix         = os.path.join(self.tfrecord_dir, os.path.basename(self.tfrecord_dir))
         self.expected_images    = expected_images
         self.cur_images         = 0
         self.shape              = None
-        self.resolution_log2    = None
+        self.resolution_log2    = res_log2
         self.tfr_writers        = []
         self.print_progress     = print_progress
         self.progress_interval  = progress_interval
@@ -86,6 +86,19 @@ class TFRecordExporter:
                 'data': tf.train.Feature(bytes_list=tf.train.BytesList(value=[quant.tostring()]))}))
             tfr_writer.write(ex.SerializeToString())
         self.cur_images += 1
+        
+    def create_tfr_writer(self, shape):
+        self.shape = [shape[2], shape[0], shape[1]]
+        assert self.shape[0] in [1, 3]
+        assert self.shape[1] % (2 ** self.resolution_log2) == 0
+        assert self.shape[2] % (2 ** self.resolution_log2) == 0
+        tfr_opt = tf.python_io.TFRecordOptions(
+            tf.python_io.TFRecordCompressionType.NONE
+        )
+        tfr_file = self.tfr_prefix + "-r%02d.tfrecords" % (
+                    self.resolution_log2
+        )
+        self.tfr_writers.append(tf.python_io.TFRecordWriter(tfr_file, tfr_opt))
 
     def add_labels(self, labels):
         if self.print_progress:
@@ -499,6 +512,15 @@ def create_celeba(tfrecord_dir, celeba_dir, cx=89, cy=121):
 
 #----------------------------------------------------------------------------
 
+def _get_all_files(path):
+    if os.path.isfile(path):
+        return [path]
+    possible_files = sorted(glob.glob(os.path.join(path, "*")))
+    return_list = []
+    for possible_file in possible_files:
+        return_list.extend(_get_all_files(possible_file))
+    return return_list
+
 def create_from_images(tfrecord_dir, image_dir, shuffle):
     print('Loading images from "%s"' % image_dir)
     image_filenames = sorted(glob.glob(os.path.join(image_dir, '*')))
@@ -524,6 +546,36 @@ def create_from_images(tfrecord_dir, image_dir, shuffle):
             else:
                 img = img.transpose([2, 0, 1]) # HWC => CHW
             tfr.add_image(img)
+            
+def create_from_images_raw(tfrecord_dir, image_dir, shuffle, res_log2=7, resize=None):
+    print('Loading images from "%s"' % image_dir)
+    image_filenames = _get_all_files(image_dir)
+    print(f"detected {len(image_filenames)} images ...")
+    if len(image_filenames) == 0:
+        error("No input images found")
+    img = np.asarray(PIL.Image.open(image_filenames[0]))
+    #resolution = img.shape[0]
+    channels = img.shape[2] if img.ndim == 3 else 1
+    
+    if channels not in [1, 3]:
+        error("Input images must be stored as RGB or grayscale")
+    if shuffle:
+        print("Shuffle the images...")
+    with TFRecordExporter(tfrecord_dir, len(image_filenames)) as tfr:
+        order = (
+            tfr.choose_shuffled_order() if shuffle else np.arange(len(image_filenames))
+        )
+        tfr.create_tfr_writer(img.shape)
+        print("Adding the images to tfrecords ...")
+        for idx in range(order.size):
+            if idx % 1000 == 0:
+                print ("added images", idx)
+            with tf.gfile.FastGFile(image_filenames[order[idx]], 'rb') as fid:
+                try:
+                    tfr.add_image_raw(fid.read())
+                except:
+                    print ('error when adding', image_filenames[order[idx]])
+                    continue
 
 #----------------------------------------------------------------------------
 

@@ -50,16 +50,16 @@ def training_schedule(
     lod_initial_resolution  = None,     # Image resolution used at the beginning.
     lod_training_kimg       = 600,      # Thousands of real images to show before doubling the resolution.
     lod_transition_kimg     = 600,      # Thousands of real images to show when fading in new layers.
-    minibatch_size_base     = 32,       # Global minibatch size.
+    minibatch_size_base     = 32,       # Global minibatch size. initial default 32
     minibatch_size_dict     = {},       # Resolution-specific overrides.
-    minibatch_gpu_base      = 4,        # Number of samples processed at a time by one GPU.
+    minibatch_gpu_base      = 4,        # Number of samples processed at a time by one GPU. initial default 4
     minibatch_gpu_dict      = {},       # Resolution-specific overrides.
     G_lrate_base            = 0.002,    # Learning rate for the generator.
     G_lrate_dict            = {},       # Resolution-specific overrides.
     D_lrate_base            = 0.002,    # Learning rate for the discriminator.
     D_lrate_dict            = {},       # Resolution-specific overrides.
     lrate_rampup_kimg       = 0,        # Duration of learning rate ramp-up.
-    tick_kimg_base          = 4,        # Default interval of progress snapshots.
+    tick_kimg_base          = 50,        # Default interval of progress snapshots.
     tick_kimg_dict          = {8:28, 16:24, 32:20, 64:16, 128:12, 256:8, 512:6, 1024:4}): # Resolution-specific overrides.
 
     # Initialize result dict.
@@ -96,7 +96,8 @@ def training_schedule(
         s.D_lrate *= rampup
 
     # Other parameters.
-    s.tick_kimg = tick_kimg_dict.get(s.resolution, tick_kimg_base)
+#     s.tick_kimg = tick_kimg_dict.get(s.resolution, tick_kimg_base)
+    s.tick_kimg = 1
     return s
 
 #----------------------------------------------------------------------------
@@ -121,14 +122,14 @@ def training_loop(
     G_reg_interval          = 4,        # How often the perform regularization for G? Ignored if lazy_regularization=False.
     D_reg_interval          = 16,       # How often the perform regularization for D? Ignored if lazy_regularization=False.
     reset_opt_for_new_lod   = True,     # Reset optimizer internal state (e.g. Adam moments) when new layers are introduced?
-    total_kimg              = 25000,    # Total length of the training, measured in thousands of real images.
+    total_kimg              = 200,    ## Total length of the training, measured in thousands of real images. initial 25000
     mirror_augment          = False,    # Enable mirror augment?
     drange_net              = [-1,1],   # Dynamic range used when feeding image data to the networks.
-    image_snapshot_ticks    = 50,       # How often to save image snapshots? None = only save 'reals.png' and 'fakes-init.png'.
-    network_snapshot_ticks  = 50,       # How often to save network snapshots? None = only save 'networks-final.pkl'.
+    image_snapshot_ticks    = 1,       ## How often to save image snapshots? None = only save 'reals.png' and 'fakes-init.png'.
+    network_snapshot_ticks  = 5,       ## How often to save network snapshots? None = only save 'networks-final.pkl'.
     save_tf_graph           = False,    # Include full TensorFlow computation graph in the tfevents file?
     save_weight_histograms  = False,    # Include weight histograms in the tfevents file?
-    resume_pkl              = None,     # Network pickle to resume training from, None = train from scratch.
+    resume_pkl              = 'pretrained_models/stylegan2-ffhq-512-config-f.pkl',     # Network pickle to resume training from, None = train from scratch.
     resume_kimg             = 0.0,      # Assumed training progress at the beginning. Affects reporting and training schedule.
     resume_time             = 0.0,      # Assumed wallclock time at the beginning. Affects reporting.
     resume_with_new_nets    = False):   # Construct new networks according to G_args and D_args before resuming training?
