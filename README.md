@@ -17,7 +17,7 @@ Why I pick them manually? I need to keep the data balanced, which means I need t
 
 ## Process
 
-All my works are in the [notebook](./Animify.ipynb). Check that out!
+All my works are in the [notebook](./human2anime.ipynb). Check that out!
 
 ![example1](./imgs/example_01-merged.png)
 
