@@ -1,9 +1,9 @@
-# Animify -- Face Transformation from Human to Anime
+# Face Transformation from Human to Anime
 
 ## Introduction
 
 This is a project just for fun!
-Inspired by [Toonify](https://www.justinpinkney.com/toonify-yourself/), I tried to follow the tips the author provided to generate an anime face from a given real human face.
+Inspired by [Toonify](https://www.justinpinkney.com/toonify-yourself/), I tried to follow the tips from the author to generate an anime face from a given real human face.
 
 Due to the constraint of computational resources of a poor student, the outcome seems to be a bit worse than what it should be. I used RTX 2070 and all the works are done in a day.
 
@@ -19,9 +19,11 @@ Why I pick them manually? I need to keep the data balanced, which means I need t
 
 All my works are in the [notebook](./Animify.ipynb). Check that out!
 
-![aligned](./images/aligned/example_01.png)
+![example1](./imgs/example_01-merged.png)
 
-![generated](./images/generated/example_01-anime.jpg)
+![example2](./imgs/example2_01-merged.png)
+
+![example3](./imgs/example3_01-merged.png)
 
 ## Reference
 
