@@ -19,11 +19,19 @@ Why I pick them manually? I need to keep the data balanced, which means I need t
 
 All my works are in the [notebook](./human2anime.ipynb). Check that out!
 
+## Results
+
+### Directly generate the image with the fine-tuned model
+
 ![example1](./imgs/example_01-merged.png)
 
 ![example2](./imgs/example2_01-merged.png)
 
 ![example3](./imgs/example3_01-merged.png)
+
+### Generate with blending models at different level
+
+![blend](./imgs/blending.gif)
 
 ## Reference
 
