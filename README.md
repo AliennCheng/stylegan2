@@ -7,6 +7,8 @@ Inspired by [Toonify](https://www.justinpinkney.com/toonify-yourself/), I tried 
 
 Due to the constraint of computational resources of a poor student, the outcome seems to be a bit worse than what it should be. I used RTX 2070 and all the works are done in a day.
 
+Contact: alienncheng@gmail.com
+
 ## Data Preparation
 
 I downloaded the [danbooru2019-portrait](https://www.gwern.net/Crops#danbooru2019-portraits) dataset and manually pick 1000 images from it.
